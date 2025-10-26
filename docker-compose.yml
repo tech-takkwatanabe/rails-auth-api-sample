@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./apps/api
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: mysql2://root:password@db:3306/app_development
+      REDIS_URL: redis://redis:6379/0
+
+  db:
+    image: mysql:8.0
+    platform: linux/amd64 # M1/M2 Mac対策
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: app_development
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+  redis:
+    image: redis:7.0
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  db-data:
+  redis-data:
