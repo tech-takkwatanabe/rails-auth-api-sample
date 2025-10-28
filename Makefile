@@ -1,4 +1,4 @@
-.PHONY: init up down logs ps exec
+.PHONY: init up down logs ps exec test
 
 init:
 	@docker-compose build
@@ -17,3 +17,6 @@ ps:
 
 exec:
 	@docker-compose exec api bash
+
+test:
+	@docker-compose exec api bin/rails test $(file)
