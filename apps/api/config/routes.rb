@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     namespace :auth do
       post :signup, to: 'users#create'
       post :login, to: 'sessions#create'
+      get :me, to: 'users#me'
     end
   end
 end
