@@ -21,7 +21,7 @@ services:
     image: mysql:8.0
     platform: linux/amd64
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: app_development
     ports:
       - "3306:3306"
