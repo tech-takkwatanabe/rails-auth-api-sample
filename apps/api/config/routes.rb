@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       post :signup, to: 'users#create'
       post :login, to: 'sessions#create'
       get :me, to: 'users#me'
+      post :refresh, to: 'refreshes#create'
     end
   end
 end
