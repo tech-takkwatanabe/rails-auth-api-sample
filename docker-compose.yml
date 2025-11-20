@@ -14,7 +14,7 @@ services:
     environment:
       RAILS_ENV: development
       DATABASE_URL: mysql2://root:password@db:3306/app_development
-      REDIS_URL: redis://redis:6379/0
+      REDIS_URL: ${REDIS_URL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
 
   db:
