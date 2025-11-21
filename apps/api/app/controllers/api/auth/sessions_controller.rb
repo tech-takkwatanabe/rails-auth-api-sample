@@ -1,6 +1,9 @@
 module Api
   module Auth
     class SessionsController < ApplicationController
+      include Authenticable
+      skip_before_action :authenticate_request!, only: [:create]
+
       def create
         user = User.find_by(email: params[:email])
 
@@ -15,7 +18,13 @@ module Api
         else
           render json: { error: 'Invalid email or password' }, status: :unauthorized
         end
-            end
+      end
+
+      def destroy
+        refresh_token = params[:refresh_token]
+        $redis.del("refresh_token:#{refresh_token}")
+        head :no_content
+      end
     end
   end
 end
