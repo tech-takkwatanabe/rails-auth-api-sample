@@ -41,6 +41,15 @@ services:
     volumes:
       - redis-data:/data
 
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./docs:/usr/share/nginx/html/docs
+    environment:
+      URLS: "[{ url: '/docs/openapi.yaml', name: 'Rails Auth API' }]"
+
 volumes:
   db-data:
   redis-data:
