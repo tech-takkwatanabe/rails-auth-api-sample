@@ -1,11 +1,12 @@
+name: rails-auth-api-sample
 services:
   api:
     build:
-      context: ./apps/api
+      context: .
     ports:
       - '8080:3000'
     volumes:
-      - ./apps/api:/rails
+      - .:/rails
     depends_on:
       db:
         condition: service_healthy
