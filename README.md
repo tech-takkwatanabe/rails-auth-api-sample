@@ -57,7 +57,7 @@ Ruby on Railsを使用してトークンベースの認証APIを構築する方�
     ```
 
 5.  **アプリケーションが起動しました！**
-    - APIは `http://localhost:3000` で利用可能です。
+    - APIは `http://localhost:8080` で利用可能です。
     - データベースはポート `3306` でアクセス可能です。
     - Redisはポート `6379` でアクセス可能です。
 
@@ -153,7 +153,7 @@ This is a sample project to demonstrate how to build a token-based authenticatio
     ```
 
 5.  **The application is now running!**
-    - The API is available at `http://localhost:3000`
+    - The API is available at `http://localhost:8080`
     - The database is accessible on port `3306`
     - Redis is accessible on port `6379`
 
