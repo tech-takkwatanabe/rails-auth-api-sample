@@ -1,72 +1,189 @@
-# rails-auth-api-sample
+# Rails 認証API サンプル
 
-## 環境構築
+Ruby on Railsを使用してトークンベースの認証APIを構築する方法を示すサンプルプロジェクトです。
 
-1. **ディレクトリ作成**
+## 機能
 
-   ```bash
-   mkdir -p apps/api
-   ```
+- **ユーザー認証:**
+  - ユーザー登録 (`/api/auth/signup`)
+  - メールアドレスとパスワードでのログイン (`/api/auth/login`)
+  - JWTベースのアクセストークン発行
+- **トークン管理:**
+  - リフレッシュトークンの発行とローテーション (`/api/auth/refresh`)
+  - ログアウト（リフレッシュトークンの無効化） (`/api/auth/logout`)
+- **ユーザー情報:**
+  - 有効なトークンから現在のユーザー情報を取得 (`/api/auth/me`)
+- **コンテナ化された開発環境:**
+  - DockerとDocker Composeを使用した完全なコンテナ開発環境
+  - 一般的なコマンドに簡単にアクセスするためのMakefile
+- **APIドキュメント:**
+  - Swagger UIで提供されるOpenAPI仕様
 
-2. **Dockerfileとdocker-compose.ymlの作成**
+## 技術スタック
 
-   `apps/api/Dockerfile` と `docker-compose.yml` を作成します。（内容は省略）
+- **バックエンド:** Ruby on Rails 7
+- **データベース:** MySQL 8
+- **インメモリストア:** Redis 7 (リフレッシュトークン用)
+- **コンテナ化:** Docker, Docker Compose
+- **API仕様:** OpenAPI 3.0 (Swagger)
 
-3. **Railsプロジェクトの雛形作成**
+## 前提条件
 
-   コンテナのビルドと`rails new`を一度に実行しようとすると依存関係で問題が発生するため、以下の手順で実行します。
+- Docker
+- Docker Compose
 
-   ```bash
-   # 1. Railsのgemを含む最小限のGemfileを作成
-   echo 'source "https://rubygems.org"' > apps/api/Gemfile
-   echo 'gem "rails", "~> 7.1"' >> apps/api/Gemfile
+## 🚀 セットアップと使い方
 
-   # 2. Gemfile.lockを生成
-   docker run --rm -v "$(pwd)/apps/api:/app" -w /app ruby:3.2.2 bundle install
+1.  **リポジトリをクローン**
 
-   # 3. Railsプロジェクトを作成
-   docker-compose run --build --rm api rails new . --force --database=mysql --api
-   ```
+2.  **`.env`ファイルの作成:**
+    サンプルファイルをコピーして、必要な環境変数を設定します。
+    ```bash
+    cp .env.example .env
+    ```
+    *（ローカル開発では、デフォルト値のままで動作します。）*
 
-4. **ファイル所有権の変更**
+3.  **アプリケーションの起動:**
+    このコマンドはDockerイメージをビルドし、`api`, `db`, `redis`, `swagger-ui`の各コンテナをバックグラウンドで起動します。
+    ```bash
+    make up
+    ```
 
-   `rails new`で生成されたファイルの所有者が`root`になるため、ホストのユーザーに変更します。
+4.  **データベースの準備:**
+    初回起動時には、データベースの作成とマイグレーションを実行する必要があります。
+    ```bash
+    make exec CMD="bin/rails db:create"
+    make exec CMD="bin/rails db:migrate"
+    ```
 
-   ```bash
-   # このコマンドはホストのターミナルで実行する必要がある
-   sudo chown -R $(whoami) apps/api
-   ```
+5.  **アプリケーションが起動しました！**
+    - APIは `http://localhost:3000` で利用可能です。
+    - データベースはポート `3306` でアクセス可能です。
+    - Redisはポート `6379` でアクセス可能です。
 
-5. **コンテナの起動とデータベースのセットアップ**
+## 📖 APIドキュメント
 
-   ```bash
-   # コンテナをバックグラウンドで起動
-   docker-compose up --build -d
+APIドキュメントは`swagger-ui`コンテナによって提供されます。ブラウザで以下のURLにアクセスしてください。
 
-   # データベースを作成
-   docker-compose exec api bin/rails db:create
-   ```
+- **[http://localhost:8081](http://localhost:8081)**
 
-6. **Userモデルの作成**
+OpenAPIの仕様ファイルは`docs/openapi.yaml`にあります。
 
-   ```bash
-   # rootユーザーで`generate`コマンドを実行
-   docker-compose exec --user root api bin/rails generate model User uuid:string:uniq name:string email:string:uniq password_digest:string
+## ✅ テストの実行
 
-   # 再度、ファイルの所有権を変更
-   sudo chown -R $(whoami) apps/api
+- **すべてのテストを実行:**
+  ```bash
+  make test
+  ```
 
-   # データベースマイグレーションを実行
-   docker-compose exec api bin/rails db:migrate
-   ```
+- **特定のテストファイルを実行:**
+  ```bash
+  make test file=test/controllers/api/auth/sessions_controller_test.rb
+  ```
 
-7. **bcryptのインストールと設定**
+## Makefile コマンド一覧
 
-   ```bash
-   # Gemfileにbcryptを追加
-   echo 'gem "bcrypt", "~> 3.1.7"' >> apps/api/Gemfile
+便利な`Makefile`が用意されています。
 
-   # gemをインストール
-   docker-compose exec api bundle install
-   ```
-   その後、`app/models/user.rb` に `has_secure_password` を追記しました。
+- `make up`: 必要に応じてイメージをビルドし、すべてのコンテナをデタッチモードで起動します。
+- `make down`: すべてのコンテナを停止・削除します。
+- `make logs`: `api`コンテナのログを追跡表示します。
+- `make ps`: 実行中のすべてのコンテナの状態を表示します。
+- `make exec`: `api`コンテナ内でbashシェルを起動します。
+- `make test`: Minitestスイートを実行します。
+
+---
+
+# Rails Auth API Sample
+
+This is a sample project to demonstrate how to build a token-based authentication API using Ruby on Rails.
+
+## Features
+
+- **User Authentication:**
+  - User registration (`/api/auth/signup`)
+  - Login with email and password (`/api/auth/login`)
+  - JWT-based access token issuance
+- **Token Management:**
+  - Refresh token issuance and rotation (`/api/auth/refresh`)
+  - Logout (refresh token invalidation) (`/api/auth/logout`)
+- **User Information:**
+  - Get current user information from a valid token (`/api/auth/me`)
+- **Containerized Development:**
+  - Fully containerized development environment using Docker and Docker Compose.
+  - Makefile for easy access to common commands.
+- **API Documentation:**
+  - OpenAPI specification served with Swagger UI.
+
+## Tech Stack
+
+- **Backend:** Ruby on Rails 7
+- **Database:** MySQL 8
+- **In-memory Store:** Redis 7 (for refresh tokens)
+- **Containerization:** Docker, Docker Compose
+- **API Specification:** OpenAPI 3.0 (Swagger)
+
+## Prerequisites
+
+- Docker
+- Docker Compose
+
+## 🚀 Setup & Usage
+
+1.  **Clone the repository**
+
+2.  **Create `.env` file:**
+    Copy the example file and set the required environment variables.
+    ```bash
+    cp .env.example .env
+    ```
+    *(You can leave the default values for local development.)*
+
+3.  **Start the application:**
+    This command will build the Docker images and start the `api`, `db`, `redis`, and `swagger-ui` containers in the background.
+    ```bash
+    make up
+    ```
+
+4.  **Prepare the database:**
+    The first time you start the application, you need to create and migrate the database.
+    ```bash
+    make exec CMD="bin/rails db:create"
+    make exec CMD="bin/rails db:migrate"
+    ```
+
+5.  **The application is now running!**
+    - The API is available at `http://localhost:3000`
+    - The database is accessible on port `3306`
+    - Redis is accessible on port `6379`
+
+## 📖 API Documentation
+
+The API documentation is served by the `swagger-ui` container. You can access it in your browser at:
+
+- **[http://localhost:8081](http://localhost:8081)**
+
+The OpenAPI specification file is located at `docs/openapi.yaml`.
+
+## ✅ Running Tests
+
+- **Run all tests:**
+  ```bash
+  make test
+  ```
+
+- **Run a specific test file:**
+  ```bash
+  make test file=test/controllers/api/auth/sessions_controller_test.rb
+  ```
+
+## Makefile Commands
+
+A `Makefile` is provided for convenience.
+
+- `make up`: Builds images if necessary and starts all containers in detached mode.
+- `make down`: Stops and removes all containers.
+- `make logs`: Tails the logs of the `api` container.
+- `make ps`: Shows the status of all running containers.
+- `make exec`: Opens a bash shell inside the `api` container.
+- `make test`: Runs the Minitest suite.
