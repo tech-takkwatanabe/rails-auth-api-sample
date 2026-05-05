@@ -11,6 +11,17 @@ Things you may want to cover:
 
 * Configuration
 
+  HTTPSでローカル開発を行うために、自己署名証明書('.certificate'ディレクトリ)をマウントしています。
+  `.env` ファイルに以下の設定を追加してください。
+  ```
+  SSL_PORT=3443
+  SSL_KEY_PATH=/rails/certs/localhost-key.pem
+  SSL_CERT_PATH=/rails/certs/localhost-cert.pem
+  ```
+  アクセス先:
+  * HTTPS: `https://localhost:8443`
+  * HTTP: `http://localhost:8080`
+
 * Database creation
 
 * Database initialization
