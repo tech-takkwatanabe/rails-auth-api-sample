@@ -23,8 +23,16 @@
 threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
-# Specifies the `port` that Puma will listen on to receive requests; default is 8080.
-port ENV.fetch("PORT", 8080)
+# Specifies the `port` that Puma will listen on to receive requests; default is 3000 for docker-compose mapping 8080:3000
+port ENV.fetch("HTTP_PORT", 3000)
+
+if ENV.fetch("RAILS_ENV", "development") == "development" || ENV.fetch("RAILS_ENV", "development") == "test"
+  ssl_bind '0.0.0.0', ENV.fetch("SSL_PORT", 3443), {
+    key: ENV.fetch("SSL_KEY_PATH", "/rails/certs/localhost-key.pem"),
+    cert: ENV.fetch("SSL_CERT_PATH", "/rails/certs/localhost-cert.pem"),
+    verify_mode: 'none'
+  }
+end
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
