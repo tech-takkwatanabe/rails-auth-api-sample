@@ -70,7 +70,7 @@ graph TD
 
 おっしゃる通り、最も大きな構造上の課題です。
 
-**現状のコード例** — [sessions_controller.rb](file:///Users/watanabetaku/htdocs/rails-auth-api-sample/apps/api/app/controllers/api/auth/sessions_controller.rb#L7-L21)：
+**現状のコード例** — [sessions_controller.rb](../apps/api/app/controllers/api/auth/sessions_controller.rb)：
 ```ruby
 # コントローラー内で以下をすべてやっている:
 # 1. ユーザー検索 + パスワード認証
@@ -89,7 +89,7 @@ graph TD
 
 ### 2. `$redis` グローバル変数
 
-[redis.rb](file:///Users/watanabetaku/htdocs/rails-auth-api-sample/apps/api/config/initializers/redis.rb) で `$redis` をグローバル変数として定義しており、コントローラーから `$redis.set(...)` / `$redis.get(...)` / `$redis.del(...)` を直接呼んでいる。
+[redis.rb](../apps/api/config/initializers/redis.rb) で `$redis` をグローバル変数として定義しており、コントローラーから `$redis.set(...)` / `$redis.get(...)` / `$redis.del(...)` を直接呼んでいる。
 
 **問題点**:
 - グローバル変数はテスト時のモック/スタブが困難

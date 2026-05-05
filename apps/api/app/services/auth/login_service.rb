@@ -1,6 +1,6 @@
 class Auth::LoginService
   def self.call(email:, password:)
-    user = User.find_by(email: email)
+    user = User.find_by(email: email&.downcase)
 
     unless user&.authenticate(password)
       return { success: false, error: "Invalid email or password" }

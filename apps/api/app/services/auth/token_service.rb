@@ -15,10 +15,10 @@ class Auth::TokenService
     redis.del("#{REFRESH_TOKEN_PREFIX}#{token}")
   end
 
-  # リフレッシュトークンでRedisを検索し、対応するUserを返す
+  # リフレッシュトークンをRedisからアトミックに取得・削除し、対応するUserを返す
   # トークンが無効な場合はnilを返す
-  def self.find_user_by_refresh_token(token)
-    user_id = redis.get("#{REFRESH_TOKEN_PREFIX}#{token}")
+  def self.consume_refresh_token(token)
+    user_id = redis.getdel("#{REFRESH_TOKEN_PREFIX}#{token}")
     return nil unless user_id
 
     User.find_by(id: user_id)

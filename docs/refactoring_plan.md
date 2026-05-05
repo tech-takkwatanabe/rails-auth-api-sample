@@ -1,6 +1,6 @@
 # リファクタリング計画
 
-> 基づくドキュメント: [architecture_review_20260504.md](file:///Users/watanabetaku/htdocs/rails-auth-api-sample/docs/architecture_review_20260504.md)
+> 基づくドキュメント: [architecture_review_20260504.md](./architecture_review_20260504.md)
 
 ## 概要
 
@@ -11,7 +11,7 @@
 
 ## リファクタリング後の構成
 
-```
+```text
 app/
 ├── controllers/
 │   ├── concerns/
