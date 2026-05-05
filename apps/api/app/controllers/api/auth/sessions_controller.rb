@@ -5,24 +5,16 @@ module Api
       skip_before_action :authenticate_request!, only: [:create]
 
       def create
-        user = User.find_by(email: params[:email])
-
-        if user&.authenticate(params[:password])
-          access_token = JsonWebToken.encode(user_id: user.id)
-          
-          # リフレッシュトークンの生成と保存
-          refresh_token = SecureRandom.hex(32)
-          $redis.set("refresh_token:#{refresh_token}", user.id, ex: 7.days.to_i)
-
-          render json: { uuid: user.uuid, access_token: access_token, refresh_token: refresh_token }, status: :ok
+        result = ::Auth::LoginService.call(email: params[:email], password: params[:password])
+        if result[:success]
+          render json: result[:payload], status: :ok
         else
-          render json: { error: 'Invalid email or password' }, status: :unauthorized
+          render json: { error: result[:error] }, status: :unauthorized
         end
       end
 
       def destroy
-        refresh_token = params[:refresh_token]
-        $redis.del("refresh_token:#{refresh_token}")
+        ::Auth::LogoutService.call(refresh_token: params[:refresh_token])
         head :no_content
       end
     end
