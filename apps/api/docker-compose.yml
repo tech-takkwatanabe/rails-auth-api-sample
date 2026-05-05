@@ -3,10 +3,13 @@ services:
   api:
     build:
       context: .
+    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails db:prepare && bundle exec puma -C config/puma.rb"
     ports:
       - '8080:3000'
+      - '8443:3443'
     volumes:
       - .:/rails
+      - ../../.certificate:/rails/certs:ro
     depends_on:
       db:
         condition: service_healthy
@@ -17,6 +20,9 @@ services:
       DATABASE_URL: mysql2://root:password@db:3306/app_development
       REDIS_URL: ${REDIS_URL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      SSL_PORT: ${SSL_PORT}
+      SSL_KEY_PATH: ${SSL_KEY_PATH}
+      SSL_CERT_PATH: ${SSL_CERT_PATH}
 
   db:
     image: mysql:8.0

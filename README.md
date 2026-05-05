@@ -31,6 +31,22 @@ Ruby on Railsを使用してトークンベースの認証APIを構築する方�
 
 - Docker
 - Docker Compose
+- mkcert (ローカルHTTPS用、任意ですが推奨)
+
+## 開発用SSL証明書の準備
+
+HTTPSでローカル開発を行う場合、自己署名証明書が必要です。
+
+まだローカル認証局を作成していない場合
+```bash
+mkcert -install
+```
+
+.certificate ディレクトリに `localhost-cert.pem` と `localhost-key.pem` を配置してください。
+```bash
+mkdir -p .certificate
+mkcert -key-file .certificate/localhost-key.pem -cert-file .certificate/localhost-cert.pem localhost 127.0.0.1 ::1
+```
 
 ## 🚀 セットアップと使い方
 
@@ -57,7 +73,7 @@ Ruby on Railsを使用してトークンベースの認証APIを構築する方�
     ```
 
 5.  **アプリケーションが起動しました！**
-    - APIは `http://localhost:8080` で利用可能です。
+    - APIは `https://localhost:8443` (HTTPS) および `http://localhost:8080` (HTTP) で利用可能です。
     - データベースはポート `3306` でアクセス可能です。
     - Redisはポート `6379` でアクセス可能です。
 
@@ -127,6 +143,22 @@ This is a sample project to demonstrate how to build a token-based authenticatio
 
 - Docker
 - Docker Compose
+- mkcert (for local HTTPS, optional but recommended)
+
+## Development SSL Certificate Preparation
+
+When developing locally with HTTPS, a self-signed certificate is required.
+
+If you haven't created a local certificate authority yet:
+```bash
+mkcert -install
+```
+
+Place `localhost-cert.pem` and `localhost-key.pem` in the `.certificate` directory:
+```bash
+mkdir -p .certificate
+mkcert -key-file .certificate/localhost-key.pem -cert-file .certificate/localhost-cert.pem localhost 127.0.0.1 ::1
+```
 
 ## 🚀 Setup & Usage
 
@@ -153,7 +185,7 @@ This is a sample project to demonstrate how to build a token-based authenticatio
     ```
 
 5.  **The application is now running!**
-    - The API is available at `http://localhost:8080`
+    - The API is available at `https://localhost:8443` (HTTPS) and `http://localhost:8080` (HTTP)
     - The database is accessible on port `3306`
     - Redis is accessible on port `6379`
 
