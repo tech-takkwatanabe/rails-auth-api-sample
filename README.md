@@ -83,7 +83,7 @@ APIドキュメントは`swagger-ui`コンテナによって提供されます�
 
 - **[http://localhost:8081](http://localhost:8081)**
 
-OpenAPIの仕様ファイルは`docs/openapi.yaml`にあります。
+OpenAPIの仕様ファイルは `apps/api/docs/openapi.yaml` にあります（※現在、このファイルは手動で更新されています）。
 
 ## ✅ テストの実行
 
@@ -195,7 +195,7 @@ The API documentation is served by the `swagger-ui` container. You can access it
 
 - **[http://localhost:8081](http://localhost:8081)**
 
-The OpenAPI specification file is located at `docs/openapi.yaml`.
+The OpenAPI specification file is located at `apps/api/docs/openapi.yaml` (Note: This file is currently maintained manually).
 
 ## ✅ Running Tests
 

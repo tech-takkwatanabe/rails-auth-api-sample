@@ -79,6 +79,8 @@ paths:
         - Auth
       security:
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
       responses:
         '200':
           description: Successful response
@@ -130,6 +132,8 @@ paths:
         - Auth
       security:
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
       requestBody:
         required: true
         content:
@@ -155,6 +159,15 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
+  parameters:
+    Authorization:
+      name: Authorization
+      in: header
+      description: "Bearer {access_token}"
+      required: true
+      schema:
+        type: string
 
   schemas:
     NewUser:
